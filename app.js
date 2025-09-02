@@ -66,10 +66,23 @@ app.get("/", async (req, res) => {
   // Send email via Resend
   try {
     await resend.emails.send({
-      from: "hello@my-bazarr.in", // must be verified in Resend
-      to: "huzefaratlam63@gmail.com", // replace with actual recipient
-      subject: "Hello!",
-      html: `<p>Hello! Your random cookie is: <strong>${randomValue}</strong></p>`,
+      from: "My-Bazarr <hello@my-bazarr.in>", // Verified email
+      to: 'huzefaratlam63@gmail.com',
+      subject: "Welcome to My-Bazarr!",
+      text: `Hello!\n\nYour random cookie value is: ${randomValue}\n\nThanks for visiting My-Bazarr!`,
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333; padding: 20px;">
+          <h2 style="color:#2c3e50;">Welcome to My-Bazarr!</h2>
+          <p>Hello,</p>
+          <p>Here is your random cookie value:</p>
+          <p style="font-size:18px; font-weight:bold; color:#3498db;">${randomValue}</p>
+          <hr />
+          <p style="font-size:14px; color:#888;">
+            You received this email because you visited My-Bazarr.<br />
+            Contact us: <a href="mailto:support@my-bazarr.in">support@my-bazarr.in</a>
+          </p>
+        </div>
+      `,
     });
     console.log("Email sent successfully");
   } catch (err) {
