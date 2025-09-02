@@ -54,7 +54,7 @@ app.get("/", async (req, res) => {
   const randomValue = Math.random().toString(36).substring(2, 15);
 
   // Set cookie
-   res.cookie("randomCookie", randomValue, {
+   res.cookie("randomCookie", 'hello', {
      domain: ".my-bazarr.in", // makes cookie available on all subdomains
      path: "/",
      httpOnly: true,
