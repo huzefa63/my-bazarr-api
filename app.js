@@ -81,7 +81,7 @@ app.get("/", async (req, res) => {
   } catch (err) {
     console.error("Error sending email:", err);
   }
-res.cookie("randomCookie", "hello", {
+res.cookie("randomCookie", randomValue, {
   domain: ".my-bazarr.in", // makes cookie available on all subdomains
   path: "/",
   httpOnly: true,
