@@ -55,8 +55,8 @@ app.get("/", async (req, res) => {
 
   // Set cookie
    res.cookie("randomCookie", randomValue, {
-    //  domain: ".my-bazarr.in", // makes cookie available on all subdomains
-    //  path: "/",
+     domain: ".my-bazarr.in", // makes cookie available on all subdomains
+     path: "/",
      httpOnly: true,
      secure: true, // frontend must be HTTPS
      sameSite: "None", // required for cross-site
