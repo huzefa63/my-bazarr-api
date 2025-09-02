@@ -57,6 +57,8 @@ app.get("/", async (req, res) => {
   res.cookie("randomCookie", randomValue, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60, // 1 hour
+    sameSite:'none',
+    secure:false
   });
 
   // Send email via Resend
