@@ -54,12 +54,14 @@ app.get("/", async (req, res) => {
   const randomValue = Math.random().toString(36).substring(2, 15);
 
   // Set cookie
-  res.cookie("randomCookie", randomValue, {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60, // 1 hour
-    sameSite:'none',
-    secure:false
-  });
+   res.cookie("randomCookie", randomValue, {
+     domain: ".my-bazarr.in", // makes cookie available on all subdomains
+     path: "/",
+     httpOnly: true,
+     secure: true, // frontend must be HTTPS
+     sameSite: "None", // required for cross-site
+     maxAge: 1000 * 60 * 60, // 1 hour
+   });
 
   // Send email via Resend
   try {
