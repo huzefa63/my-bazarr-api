@@ -24,17 +24,4 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use('/cookie',(req,res) => {
-    const num = Math.floor(Math.random() * 10) + 1;
-    console.log(num);
-
-    console.log('req came');
-    // res.status(200).json({status:'success',mess:'cookie sent'});
-    res.cookie("jwt", num, {
-      httpOnly: true, // Protect from JavaScript access
-      secure: true, // Required for HTTPS
-      sameSite: 'none', // Allow cross-site
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    }).status(200).json({status:'success',mess:'cookie sent'});
-})
 export default app;
