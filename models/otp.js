@@ -12,7 +12,10 @@ const schema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now(),
-        expires:Date.now() * 5 * 60 * 1000
+    },
+    expiresAt:{
+        type:Date,
+        default:new Date(Date.now() + 5 * 60 * 1000)
     }
 });
 

@@ -2,11 +2,13 @@ import express from "express";
 
 import {
   createUser,
+  verifyEmail,
 } from "../controllers/user.js";
 import { protectRoute } from "../controllers/auth.js";
 
 const route = express.Router();
 
+route.post('/verifyEmail',verifyEmail)
 route.post("/createUser", createUser);
 // route.get("/getUser", protectRoute, getUser);
 // route.patch(
