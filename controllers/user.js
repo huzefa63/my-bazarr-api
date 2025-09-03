@@ -23,7 +23,7 @@ export const createUser = catchAsync(async (req,res,next) => {
     const {email,username,otp} = req.body;
     const isOtp = await Otp.findOne({email,otp});
     if(!isOtp) return res.status(400).json({message:'invalid'});
-    if(isOtp.expiresAt < new Date(Date.now())) return res.status(400).json({message:'expired'})
+    if(new Date(isOtp.expiresAt) < new Date(Date.now())) return res.status(400).json({message:'expired'})
     const user = await User.create({email,username});
     console.log(user)
     const jwt = jsonwebtoken.sign({name:user.username,id:user._id,email:user.email},process.env.JWT_SECRET,{expiresIn:7});
