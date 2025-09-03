@@ -1,15 +1,14 @@
 import AppError from '../utils/appError.js';
 import User from '../models/user.js';
-import { verify } from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
+import catchAsync from '../utils/catchAsync.js';
 
 export const protectRoute = catchAsync(async (req, res, next) => {
-  const cookie = req.headers.authorization?.split(" ")[1];
-  // console.log(req.cookies);
-  // check if cookie is there
+  const cookie = req.cookies.token;
   if (!cookie)
     return next(new AppError("you are not logged in, please login", 401));
 
-  const decoded = await util.promisify(verify)(
+  const decoded = await util.promisify(jsonwebtoken.verify)(
     cookie,
     process.env.JWT_SECRET
   );

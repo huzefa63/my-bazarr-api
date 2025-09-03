@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import mongoose from "mongoose";
-import isEmail from "validator/lib/isEmail";
+import val from "validator";
 const schema = new mongoose.Schema({
   username: {
     type: String,
@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    validate: [isEmail, "please provide a valid email"],
+    validate: [val.isEmail, "please provide a valid email"],
   },
   password: {
     type: String,
