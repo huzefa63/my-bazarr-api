@@ -3,6 +3,7 @@ import User from '../models/user.js';
 import jsonwebtoken from 'jsonwebtoken';
 import catchAsync from '../utils/catchAsync.js';
 import SendJwt from '../helpers/jwt.js';
+import util from 'util';
 
 export const protectRoute = catchAsync(async (req, res, next) => {
   const cookie = req.cookies.token;
