@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
 import OtpRoutes from "./routes/otp.js";
+import productRoutes from "./routes/product.js";
 const app = express();
 
 // Initialize Resend with API key from .env
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use('/user',userRoutes);
 app.use('/auth',authRoutes);
 app.use('/otp',OtpRoutes);
+app.use('/product',productRoutes);
 
 
 
