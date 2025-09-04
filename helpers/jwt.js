@@ -4,7 +4,7 @@ export default function SendJwt(res,status,user,jsonRes) {
   const jwt = jsonwebtoken.sign(
     { name: user.username, id: user._id, email: user.email },
     process.env.JWT_SECRET,
-    { expiresIn: 7 }
+    { expiresIn: '7d' }
   );
   res
     .cookie("token", jwt, {
