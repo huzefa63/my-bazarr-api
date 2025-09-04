@@ -7,11 +7,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/user.js";
+import authRoutes from "./routes/auth.js";
+import OtpRoutes from "./routes/otp.js";
 const app = express();
 
 // Initialize Resend with API key from .env
 
-app.use(cors({ origin: "https://www.my-bazarr.in", credentials: true }));
+app.use(cors({ origin: process.env.ENVIROMENT === 'production' ?"http://localhost:3000":'https://www.my-bazarr.in', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -19,6 +21,8 @@ app.use(cookieParser());
 // user routes
 
 app.use('/user',userRoutes);
+app.use('/auth',authRoutes);
+app.use('/otp',OtpRoutes);
 
 
 

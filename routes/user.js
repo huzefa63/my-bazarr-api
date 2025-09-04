@@ -2,14 +2,15 @@ import express from "express";
 
 import {
   createUser,
-  verifyEmail,
 } from "../controllers/user.js";
 import { protectRoute } from "../controllers/auth.js";
+import { verifyOtp } from "../controllers/otp.js";
 
 const route = express.Router();
 
-route.post('/verifyEmail',verifyEmail)
-route.post("/createUser", createUser);
+// otp for 
+
+route.post("/createUser", verifyOtp ,createUser);
 // route.get("/getUser", protectRoute, getUser);
 // route.patch(
 //   "/updateUser",

@@ -2,6 +2,7 @@ import AppError from '../utils/appError.js';
 import User from '../models/user.js';
 import jsonwebtoken from 'jsonwebtoken';
 import catchAsync from '../utils/catchAsync.js';
+import SendJwt from '../helpers/jwt.js';
 
 export const protectRoute = catchAsync(async (req, res, next) => {
   const cookie = req.cookies.token;
@@ -30,4 +31,15 @@ export const protectRoute = catchAsync(async (req, res, next) => {
   }
   req.user = user;
   next();
+});
+
+export const handleLogin = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) res.status(400).json({ message: "user not found" });
+  SendJwt(res, 200, user, {
+    message: "success",
+    signedIn: true,
+    user: { email: user.email, id: user._id, username: user.username },
+  });
 });
