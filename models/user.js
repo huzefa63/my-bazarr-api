@@ -18,9 +18,8 @@ const schema = new mongoose.Schema({
 },{timestamps:true});
 
 
-schema.post('save',async function(next){
+schema.post('save',async function(){
   await Cart.create({user:this._id});
-  next();
 })
 
 const model = mongoose.model('User',schema); 
