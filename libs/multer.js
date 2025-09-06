@@ -3,6 +3,7 @@ import multer from 'multer'
 const storage = multer.memoryStorage();
 
 const multerFilter = (req,file,cb) => {
+    // console.log('filter brother')
     if(file.mimetype.startsWith('image/')){
         cb(null,true)
     }

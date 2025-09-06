@@ -19,6 +19,6 @@ const schema = new mongoose.Schema({
     }
 });
 
-const model = mongoose.model('otp',schema); 
+const model = mongoose.model('Otp',schema); 
 
 export default model;

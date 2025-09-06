@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import val from "validator";
+import Cart from '../models/cart.js'
 const schema = new mongoose.Schema({
   username: {
     type: String,
@@ -16,6 +17,11 @@ const schema = new mongoose.Schema({
   },
 },{timestamps:true});
 
+
+schema.post('save',async function(next){
+  await Cart.create({user:this._id});
+  next();
+})
 
 const model = mongoose.model('User',schema); 
 

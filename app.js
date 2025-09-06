@@ -10,6 +10,7 @@ import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
 import OtpRoutes from "./routes/otp.js";
 import productRoutes from "./routes/product.js";
+import cartRoutes from "./routes/cart.js";
 const app = express();
 
 // Initialize Resend with API key from .env
@@ -25,6 +26,7 @@ app.use('/user',userRoutes);
 app.use('/auth',authRoutes);
 app.use('/otp',OtpRoutes);
 app.use('/product',productRoutes);
+app.use('/cart',cartRoutes);
 
 
 

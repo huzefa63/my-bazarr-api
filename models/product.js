@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    sellerId: {
+    seller: {
       type: mongoose.Schema.Types.ObjectId, // Reference to Seller/User
       ref: "User",
       required: true,
@@ -50,6 +50,18 @@ const productSchema = new mongoose.Schema(
     inStock: {
       type: Boolean,
       default: true,
+    },
+    returnPolicy:{
+      type:Number,
+      default:7
+    },
+    replacementPolicy:{
+      type:Number,
+      default:7
+    },
+    warranty:{
+      type:Number,
+      default:1
     },
   },
   { timestamps: true }

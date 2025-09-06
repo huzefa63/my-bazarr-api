@@ -1,7 +1,5 @@
 import catchAsync from "../utils/catchAsync.js";
 import Otp from "../models/otp.js";
-import User from "../models/user.js";
-import SendJwt from "../helpers/jwt.js";
 import crypto from 'crypto';
 import { sendOtpEmail } from "../helpers/email.js";
 

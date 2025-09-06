@@ -1,10 +1,6 @@
 import catchAsync from "../utils/catchAsync.js";
 import User from '../models/user.js'
 import jsonwebtoken from "jsonwebtoken";
-import resend from "../libs/resend.js";
-import AppError from "../utils/appError.js";
-import crypto from "crypto";
-import Otp from '../models/otp.js'
 import SendJwt from "../helpers/jwt.js";
 
 
