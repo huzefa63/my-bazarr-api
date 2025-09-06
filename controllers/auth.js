@@ -13,7 +13,6 @@ export const protectRoute = catchAsync(async (req, res, next) => {
   const cookie = req.cookies.token;
   console.log(req.cookies);
   console.log(cookie);
-  console.log(req);
   if (!cookie)
     return next(new AppError("you are not logged in, please login", 401));
 

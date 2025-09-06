@@ -2,6 +2,7 @@ import catchAsync from "../utils/catchAsync.js";
 import Cart from "../models/cart.js";
 
 export const handleAddToCart = catchAsync(async (req,res,next) => {
+    console.log('heyy')
     const {productId} = req.params;
     const {id} = req.user;
     await Cart.findOneAndUpdate({user:id},{$addToSet:{items:productId}})
