@@ -22,7 +22,7 @@ const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Initialize Resend with API key from .env
 app.post(
-  "/webhook",
+  "/webhooks",
   bodyParser.raw({ type: "application/json" }),
   async (req, res) => {
     res.json({ received: true });
