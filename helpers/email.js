@@ -28,27 +28,38 @@ export async function sendOtpEmail(email, otp) {
 export async function sendOrderSuccessEmail(email,order){
     await resend.emails.send({
       from: "My-Bazarr <hello@my-bazarr.in>", // must be a verified sender
-      to: email, // user’s email
-      subject: `Your Order #${order.id} Confirmation 🎉`,
-      text: `Thank you for your purchase! You bought ${order.itemsLength} item(s) for a total of ₹${order.total}.`,
+      to: email, // customer’s email
+      subject: `Your Order #${order.id} is Confirmed 🎉`,
+      text: `Thank you for your purchase, ${order.customerName}! 
+You bought ${order.itemsLength} item(s) for a total of ₹${order.total}. 
+We’ll notify you once your order ships.`,
       html: `
-      <div style="font-family: sans-serif; padding: 20px; background: #f9fafb;">
-        <div style="max-width: 480px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1)">
-          <h2 style="color: #111827; text-align: center;">Thank you for your purchase 🎉</h2>
-          <p style="color: #374151; text-align: center; margin: 6px 0;">
-            We’ve received your order <strong>#${order.id}</strong>
-          </p>
+    <div style="font-family: Arial, sans-serif; padding: 20px; background: #f9fafb;">
+      <div style="max-width: 480px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05)">
+        
+        <h2 style="color: #111827; text-align: center; margin: 0;">
+          Thank you for your purchase 🎉
+        </h2>
+        <p style="color: #374151; text-align: center; margin: 8px 0 20px;">
+          Hi <strong>${order.customerName}</strong>, your order <strong>#${order.id}</strong> has been confirmed.
+        </p>
 
-          <div style="margin-top: 20px; text-align: center; font-size: 16px; color: #111827;">
-            <p><strong>${order.itemsLength}</strong> item(s) purchased</p>
-            <p><strong>Total:</strong> ₹${order.total}</p>
-          </div>
-
-          <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 20px;">
-            If you have any questions, reply to this email or contact support.
-          </p>
+        <div style="text-align: center; font-size: 16px; color: #111827; margin-bottom: 20px;">
+          <p><strong>${order.itemsLength}</strong> item(s) purchased</p>
+          <p><strong>Total:</strong> ₹${order.total}</p>
         </div>
+
+        <p style="text-align: center; font-size: 13px; color: #6b7280; margin-top: 15px;">
+          We’ll notify you when your order ships 🚚
+        </p>
+
+        <p style="text-align: center; font-size: 12px; color: #9ca3af; margin-top: 20px;">
+          If you have any questions, reply to this email or contact <a href="mailto:support@my-bazarr.in" style="color: #2563eb; text-decoration: none;">support@my-bazarr.in</a>.
+        </p>
+
       </div>
-    `,
+    </div>
+  `,
     });
+
 }
