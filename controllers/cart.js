@@ -93,9 +93,8 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
       productIds:JSON.stringify(ids),
       shipping:deliveryCharges
     },
-    success_url: `${process.env.URL}/app/purchases/cart`,
-    // success_url: `${process.env.URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.URL}/cancel`,
+    success_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/orders`,
+    cancel_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/cart`,
   });
   res.status(200).json({ message: "sucess",id:session.id });
 });
