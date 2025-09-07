@@ -7,12 +7,13 @@ import util from 'util';
 
 export const protectRoute = catchAsync(async (req, res, next) => {
   if(process.env.ENVIROMENT === 'production'){
-    req.user = { id: "68bbe54044d22bf534adbf65" };
+    req.user = {
+      id: "68bd569add727b2bc3a211f8",
+      customerId: "cus_T0ghgtaWf4ZjOS",
+    };
     return next();
   }
   const cookie = req.cookies.token;
-  console.log(req.cookies);
-  console.log(cookie);
   if (!cookie)
     return next(new AppError("you are not logged in, please login", 401));
 

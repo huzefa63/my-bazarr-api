@@ -24,3 +24,31 @@ export async function sendOtpEmail(email, otp) {
   `,
   });
 }
+
+export async function sendOrderSuccessEmail(email,order){
+    await resend.emails.send({
+      from: "My-Bazarr <hello@my-bazarr.in>", // must be a verified sender
+      to: email, // user’s email
+      subject: `Your Order #${order.id} Confirmation 🎉`,
+      text: `Thank you for your purchase! You bought ${order.itemsLength} item(s) for a total of ₹${order.total}.`,
+      html: `
+      <div style="font-family: sans-serif; padding: 20px; background: #f9fafb;">
+        <div style="max-width: 480px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1)">
+          <h2 style="color: #111827; text-align: center;">Thank you for your purchase 🎉</h2>
+          <p style="color: #374151; text-align: center; margin: 6px 0;">
+            We’ve received your order <strong>#${order.id}</strong>
+          </p>
+
+          <div style="margin-top: 20px; text-align: center; font-size: 16px; color: #111827;">
+            <p><strong>${order.itemsLength}</strong> item(s) purchased</p>
+            <p><strong>Total:</strong> ₹${order.total}</p>
+          </div>
+
+          <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 20px;">
+            If you have any questions, reply to this email or contact support.
+          </p>
+        </div>
+      </div>
+    `,
+    });
+}

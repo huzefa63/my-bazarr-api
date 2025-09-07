@@ -16,7 +16,9 @@ export const createUser = catchAsync(async (req,res,next) => {
       SendJwt(res,201,user,{message:'success',signedUp:true})
 })
 
-
-
-
-
+export const getUser = catchAsync(async (req,res,next) => {
+  console.log('hee')
+   const {id} = req.user;
+   const user = await User.findById(id);
+   res.status(200).json({message:'success',user});
+})
