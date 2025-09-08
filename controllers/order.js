@@ -34,7 +34,7 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
         order._id
       } Has Been Shipped!</h2>
       <p>Dear ${order.customerName},</p>
-      <p>Good news 🎉! Your order for <strong>${
+      <p>Hey there! Your order for <strong>${
         order.productName
       }</strong> has been shipped and is on its way.</p>
 
@@ -173,7 +173,7 @@ export const handleOrderDelivered = catchAsync(async (req,res,next) => {
         console.log('sending delivery email: ',order.email);
      // Send email to customer
      await resend.emails.send({
-       from: "MyBazar <no-reply@mybazar.com>",
+       from: "MyBazar <hello@my-bazarr.in>",
        to: order.email,
        subject: `Your Order #${order._id} Has Been Delivered`,
        html: customerHtml,
