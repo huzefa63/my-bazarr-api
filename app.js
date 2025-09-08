@@ -92,12 +92,12 @@ app.post(
             })
           );
           console.log(promise);
-          // await Cart.updateOne(
-          //   { user: session.client_reference_id },
-          //   {
-          //     $pullAll: { items: productIds },
-          //   }
-          // );
+          await Cart.updateOne(
+            { user: session.client_reference_id },
+            {
+              $pullAll: { items: productIds },
+            }
+          );
           const order = {
             id: session.id,
             itemsLength: productIds.length,
@@ -137,6 +137,12 @@ app.post(
             discount: line.data[0].amount_discount / 100,
             deliveryExpected,
           });
+          await Cart.updateOne(
+            { user: session.client_reference_id },
+            {
+              $pullAll: { items: session.metadata.productId },
+            }
+          );
           await sendOrderSuccessEmail(session.customer_details.email, {
             id: session.id,
             itemsLength: 1,
