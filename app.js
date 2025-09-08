@@ -143,7 +143,7 @@ app.post(
           await Cart.updateOne(
             { user: session.client_reference_id },
             {
-              $pullAll: { items: session.metadata.productId },
+              $pullAll: { items: [session.metadata.productId] },
             }
           );
           await sendOrderSuccessEmail(session.customer_details.email, {

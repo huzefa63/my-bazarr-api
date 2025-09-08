@@ -18,15 +18,35 @@ export const handleGetAllOrders = catchAsync(async (req,res,next) => {
 
 export const handleGetAllSellerOrders = catchAsync(async (req,res,next) => {
     const {id} = req.user;
-    const orders = await Order.find({se:id});
+    const orders = await Order.find({seller:id});
     res.status(200).json({ok:true,orders});
     
+})
+export const handleShipOrder = catchAsync(async (req,res,next) => {
+    const {id} = req.user;
+    const {orderId} = req.params;
+    const orders = await Order.findByIdAndUpdate(orderId,{status:'shipped'});
+    res.status(200).json({ok:true});
+    
+})
+export const handleCancelOrder = catchAsync(async (req,res,next) => {
+    const {id} = req.user;
+    const {orderId} = req.params;
+    const orders = await Order.findByIdAndUpdate(orderId,{status:'cancelled'});
+    res.status(200).json({ok:true});
+    
+})
+export const handleOrderDelivered = catchAsync(async (req,res,next) => {
+    const {id} = req.user;
+    const {orderId} = req.params;
+    const orders = await Order.findByIdAndUpdate(orderId,{status:'delivered'});
+    res.status(200).json({ok:true});
 })
 
 export const handleGetOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('seller');
     res.status(200).json({ok:true,order});
 })
 
