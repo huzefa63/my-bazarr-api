@@ -1,6 +1,8 @@
 import Order from '../models/order.js';
 import catchAsync from "../utils/catchAsync.js";
 import Stripe from 'stripe';
+import resend from '../libs/resend.js'
+import {formatCurrency} from '../helpers/formatCurrency.js'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
@@ -25,21 +27,158 @@ export const handleGetAllSellerOrders = catchAsync(async (req,res,next) => {
 export const handleShipOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const orders = await Order.findByIdAndUpdate(orderId,{status:'shipped'});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'shipped'},{new:true});
+     const customerHtml = `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #5cb85c;">Your Order #${
+        order._id
+      } Has Been Shipped!</h2>
+      <p>Dear ${order.customerName},</p>
+      <p>Good news 🎉! Your order for <strong>${
+        order.productName
+      }</strong> has been shipped and is on its way.</p>
+
+      <h3>Order Details</h3>
+      <ul style="padding-left: 20px;">
+        <li><strong>Product:</strong> ${order.productName}</li>
+        <li><strong>Total Amount:</strong> ${formatCurrency(order.totalAmount)}</li>
+        <li><strong>Status:</strong> Shipped</li>
+        <li><strong>Shipped On:</strong> ${new Date(
+          order.updatedAt
+        ).toLocaleDateString()}</li>
+        <li><strong>Expected Delivery:</strong> ${new Date(
+          order.deliveryExpected
+        ).toLocaleDateString()}</li>
+      </ul>
+
+      <p>We will notify you once the package is delivered.</p>
+
+      <p style="margin-top: 30px;">Thanks for shopping with us.<br/>— The MyBazar Team</p>
+    </div>
+  `;
+
+     // Send email to customer
+     await resend.emails.send({
+       from: "MyBazar <no-reply@mybazar.com>",
+       to: order.email,
+       subject: `Your Order #${order._id} Has Been Shipped`,
+       html: customerHtml,
+     });
     res.status(200).json({ok:true});
     
 })
 export const handleCancelOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const orders = await Order.findByIdAndUpdate(orderId,{status:'cancelled'});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'cancelled'},{new:true}).populate('seller');
+    const customerHtml = `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #d9534f;">Your Order #${
+        order._id
+      } Has Been Cancelled</h2>
+      <p>Dear ${order.customerName},</p>
+      <p>Your order for <strong>${
+        order.productName
+      }</strong> has been cancelled.</p>
+
+      <h3>Order Details</h3>
+      <ul style="padding-left: 20px;">
+        <li><strong>Product:</strong> ${order.productName}</li>
+        <li><strong>Total:</strong> ${formatCurrency(order.totalAmount)}</li>
+        <li><strong>Status:</strong> Cancelled</li>
+        <li><strong>Placed On:</strong> ${new Date(
+          order.createdAt
+        ).toLocaleDateString()}</li>
+      </ul>
+
+      <p>If you have already made a payment, refunds (if applicable) will be processed within 5–7 business days.</p>
+
+      <p style="margin-top: 30px;">Thanks for shopping with us.<br/>— The MyBazar Team</p>
+    </div>
+  `;
+
+    // Seller email
+    const sellerHtml = `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #d9534f;">Order #${order._id} Cancelled</h2>
+      <p>Hello ${order.seller?.name || "Seller"},</p>
+      <p>The customer <strong>${
+        order.customerName
+      }</strong> has cancelled their order.</p>
+
+      <h3>Order Details</h3>
+      <ul style="padding-left: 20px;">
+        <li><strong>Product:</strong> ${order.productName}</li>
+        <li><strong>Total:</strong> ${formatCurrency(order.totalAmount)}</li>
+        <li><strong>Status:</strong> Cancelled</li>
+        <li><strong>Placed On:</strong> ${new Date(
+          order.createdAt
+        ).toLocaleDateString()}</li>
+      </ul>
+
+      <p>Please ensure no shipment is made for this order.</p>
+
+      <p style="margin-top: 30px;">Regards,<br/>— The MyBazar System</p>
+    </div>
+  `;
+
+    // Send email to customer
+    await resend.emails.send({
+      from: "MyBazar <no-reply@mybazar.com>",
+      to: order.email,
+      subject: `Order #${order._id} Cancelled`,
+      html: customerHtml,
+    });
+
+    // Send email to seller (if seller has email in DB)
+    if (order.seller?.email) {
+      await resend.emails.send({
+        from: "MyBazar <no-reply@mybazar.com>",
+        to: order.seller.email,
+        subject: `Order #${order._id} Cancelled by Customer`,
+        html: sellerHtml,
+      });
+    }
     res.status(200).json({ok:true});
     
 })
 export const handleOrderDelivered = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const orders = await Order.findByIdAndUpdate(orderId,{status:'delivered'});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'delivered'});
+     const customerHtml = `
+    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+      <h2 style="color: #28a745;">Your Order #${
+        order._id
+      } Has Been Delivered!</h2>
+      <p>Dear ${order.customerName},</p>
+      <p>We’re happy to let you know 🎉 that your order for <strong>${
+        order.productName
+      }</strong> has been successfully delivered.</p>
+
+      <h3>Order Summary</h3>
+      <ul style="padding-left: 20px;">
+        <li><strong>Product:</strong> ${order.productName}</li>
+        <li><strong>Total Paid:</strong> ${formatCurrency(order.totalAmount)}</li>
+        <li><strong>Status:</strong> Delivered</li>
+        <li><strong>Delivered On:</strong> ${new Date(
+          order.updatedAt
+        ).toLocaleDateString()}</li>
+      </ul>
+
+      <p>We hope you enjoy your purchase. If you face any issues, feel free to contact our support.</p>
+
+      <p style="margin-top: 30px;">Thank you for shopping with us!<br/>— The MyBazar Team</p>
+    </div>
+  `;
+
+     // Send email to customer
+     await resend.emails.send({
+       from: "MyBazar <no-reply@mybazar.com>",
+       to: order.email,
+       subject: `Your Order #${order._id} Has Been Delivered`,
+       html: customerHtml,
+     });
     res.status(200).json({ok:true});
 })
 

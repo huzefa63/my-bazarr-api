@@ -62,6 +62,7 @@ export const handleUploadProduct = catchAsync(async (req, res, next) => {
 
 export const handleGetMyProducts = catchAsync(async (req, res, next) => {
   const id = req.user.id;
+  console.log('myrsdfjd')
   const products = await Product.find({seller:id})
   res.status(200).json({message:'success',products});
 });
