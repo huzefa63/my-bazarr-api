@@ -63,3 +63,46 @@ We’ll notify you once your order ships.`,
     });
 
 }
+
+export default async function sendOrderReceivedEmailToSeller(email,order){
+  await resend.emails.send({
+    from: "My-Bazarr <hello@my-bazarr.in>",
+    to: email,
+    subject: `New Order Received: #${order.id} 📦`,
+    text: `New order received!
+
+Order ID: ${order.id}
+Customer: ${order.customerName}
+Product: ₹${order.productName}
+
+Log in to your account on my-bazarr for details.`,
+    html: `
+   <div style="font-family: Arial, sans-serif; padding: 20px; background: #f9fafb;">
+  <div style="max-width: 480px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05)">
+    
+    <h2 style="color: #111827; margin: 0 0 10px;">📦 New Order Received</h2>
+    <p style="color: #374151; margin: 0 0 15px;">
+      A new order has been placed on <strong>My-Bazarr</strong>.
+    </p>
+
+    <div style="font-size: 14px; color: #111827; margin-bottom: 20px; line-height: 1.6;">
+      <p><strong>Order ID:</strong> ${order.id}</p>
+      <p><strong>Customer:</strong> ${order.customerName}</p>
+      <p><strong>Product:</strong> ${order.productName}</p>
+    </div>
+
+    <a href="https://my-bazarr.in/app/seller/orders/${order.id}" 
+       style="display: inline-block; background: #2563eb; color: white; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 600;">
+      View Order
+    </a>
+
+    <p style="font-size: 12px; color: #9ca3af; margin-top: 20px;">
+      This is an automated notification. Please log in to your account on My-Bazarr to process the order.
+    </p>
+  </div>
+</div>
+
+  `,
+  });
+
+}

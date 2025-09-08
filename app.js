@@ -17,7 +17,9 @@ import Stripe from "stripe";
 import Order from "./models/order.js";
 import Cart from "./models/cart.js";
 import resend from "./libs/resend.js";
-import { sendOrderSuccessEmail } from "./helpers/email.js";
+import sendOrderReceivedEmailToSeller, {
+  sendOrderSuccessEmail,
+} from "./helpers/email.js";
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Initialize Resend with API key from .env
@@ -43,7 +45,7 @@ app.post(
     }
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      console.log(session);
+      // console.log(session);
       const line = await stripe.checkout.sessions.listLineItems(session.id, {
         expand: ["data.price.product"],
       });
@@ -53,49 +55,105 @@ app.post(
       const email = session.customer_details.email;
       const customerName = session.customer_details.name;
       const phoneNumber = session.customer_details.phone;
-      const productIds = JSON.parse(session.metadata.productIds);
       const deliveryExpected = new Date();
       deliveryExpected.setDate(deliveryExpected.getDate() + 3);
-      if (productIds?.length < 1) return;
+      if (session.metadata.purchaseType === "multiple") {
+        const productIds = JSON.parse(session.metadata.productIds);
+        const productNames = line.data
+          .filter((el) => !el.description.startsWith("_"))
+          .map((el) => el.description);
+        const sellerEmails = JSON.parse(session.metadata.sellerEmails);
+        if (productIds?.length < 1) return;
 
-      try {
-        await Promise.all(
-          line.data.map(async (el, i) => {
-            if (!el.description.startsWith("_"))
-              return await Order.create({
-                customer: customerId,
+        console.log(session.metadata.purchaseType);
+        console.log(line.data);
+        try {
+          const promise = await Promise.all(
+            line.data.map(async (el, i) => {
+              if (!el.description.startsWith("_"))
+                return await Order.create({
+                  customer: customerId,
+                  customerName,
+                  email,
+                  phoneNumber,
+                  address,
+                  productName: el.description,
+                  product: productIds[i],
+                  coverImage: el.price.product.images[0],
+                  description: el.price.product.description,
+                  deliveryCharges: Math.floor(
+                    Number(session.metadata.shipping) / productIds.length
+                  ),
+                  subTotal: el.amount_subtotal / 100,
+                  totalAmount: el.amount_total / 100,
+                  discount: el.amount_discount / 100,
+                  deliveryExpected,
+                });
+            })
+          );
+          console.log(promise);
+          // await Cart.updateOne(
+          //   { user: session.client_reference_id },
+          //   {
+          //     $pullAll: { items: productIds },
+          //   }
+          // );
+          const order = {
+            id: session.id,
+            itemsLength: productIds.length,
+            total: session.amount_total,
+          };
+          await sendOrderSuccessEmail(session.customer_details.email, order);
+          await Promise.all(
+            sellerEmails.map(async (email, i) => {
+              return await sendOrderReceivedEmailToSeller(email, {
+                id: session.id,
                 customerName,
-                email,
-                phoneNumber,
-                address,
-                productName: el.description,
-                product: productIds[i],
-                coverImage: el.price.product.images[0],
-                description: el.price.product.description,
-                deliveryCharges: Math.floor(
-                  Number(session.metadata.shipping) / productIds.length
-                ),
-                subTotal: el.amount_subtotal / 100,
-                totalAmount: el.amount_total / 100,
-                discount: el.amount_discount / 100,
-                deliveryExpected,
+                productName: productNames[i],
               });
-          })
-        );
-        await Cart.updateOne(
-          { user: session.client_reference_id },
-          {
-            $pullAll: { items: productIds },
-          }
-        );
-        const order = {
-          id:session.id,
-          itemsLength:productIds.length,
-          total:session.amount_total
+            })
+          );
+        } catch (err) {
+          console.log(err);
         }
-        await sendOrderSuccessEmail(session.customer_details.email,order)
-      } catch (err) {
-        console.log(err);
+      }
+      if(session.metadata.purchaseType === 'single'){
+        try{
+          await Order.create({
+            customer: customerId,
+            customerName,
+            email,
+            phoneNumber,
+            address,
+            productName: line.data[0].description,
+            product: session.metadata.productId,
+            coverImage: line.data[0].price.product.images[0],
+            description: line.data[0].price.product.description,
+            deliveryCharges: Math.floor(
+              Number(session.metadata.shipping)
+            ),
+            subTotal: line.data[0].amount_subtotal / 100,
+            totalAmount: line.data[0].amount_total / 100,
+            discount: line.data[0].amount_discount / 100,
+            deliveryExpected,
+          });
+          await sendOrderSuccessEmail(session.customer_details.email, {
+            id: session.id,
+            itemsLength: 1,
+            total: session.amount_total,
+          });
+         
+    
+               await sendOrderReceivedEmailToSeller(session.metadata.sellerEmail, {
+                id: session.id,
+                customerName,
+                productName: line.data[0].description,
+              });
+          
+       
+        }catch(err){
+          console.log(err);
+        }
       }
     }
   }

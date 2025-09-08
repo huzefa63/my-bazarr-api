@@ -15,7 +15,7 @@ export const handleAddToCart = catchAsync(async (req, res, next) => {
 
 export const handleGetCartItems = catchAsync(async (req, res, next) => {
   const { id } = req.user;
-  const cart = await Cart.findOne({ user: id }).populate("items");
+  const cart = await Cart.findOne({ user: id }).populate({path:'items',populate:{path:'seller',ref:'User'}});
   res
     .status(201)
     .json({
@@ -46,6 +46,7 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
   } = req.body;
 
   const ids = items.map(el => el.productId);
+  const emailsOfSellers = items.map(el => el.sellerEmail);
 
   const lineItemsData = items.map(el => {
     return {
@@ -90,7 +91,9 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
         {coupon:'nMdPosp9'}
     ],
     metadata:{
+      purchaseType:'multiple',
       productIds:JSON.stringify(ids),
+      sellerEmails:JSON.stringify(emailsOfSellers),
       shipping:deliveryCharges
     },
     success_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/orders`,
