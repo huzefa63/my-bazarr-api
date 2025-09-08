@@ -59,7 +59,7 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
 
      // Send email to customer
      await resend.emails.send({
-       from: "MyBazar <no-reply@mybazar.com>",
+       from: "My-Bazarr <hello@my-bazarr.in>",
        to: order.email,
        subject: `Your Order #${order._id} Has Been Shipped`,
        html: customerHtml,
@@ -124,17 +124,17 @@ export const handleCancelOrder = catchAsync(async (req,res,next) => {
 
     // Send email to customer
     console.log('sending email to user: ',order.email);
-    await resend.emails.send({
-      from: "MyBazar <no-reply@mybazar.com>",
+    const res = await resend.emails.send({
+      from: "My-Bazarr <hello@my-bazarr.in>",
       to: order.email,
       subject: `Order #${order._id} Cancelled`,
       html: customerHtml,
     });
-
+    console.log('email sended: ',res);
     // Send email to seller (if seller has email in DB)
     if (order.seller?.email) {
       await resend.emails.send({
-        from: "MyBazar <no-reply@mybazar.com>",
+        from: "My-Bazarr <hello@my-bazarr.in>",
         to: order.seller.email,
         subject: `Order #${order._id} Cancelled by Customer`,
         html: sellerHtml,
