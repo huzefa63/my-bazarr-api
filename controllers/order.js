@@ -16,6 +16,13 @@ export const handleGetAllOrders = catchAsync(async (req,res,next) => {
     
 })
 
+export const handleGetAllSellerOrders = catchAsync(async (req,res,next) => {
+    const {id} = req.user;
+    const orders = await Order.find({se:id});
+    res.status(200).json({ok:true,orders});
+    
+})
+
 export const handleGetOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
@@ -68,6 +75,7 @@ export const handleCheckoutOrder = catchAsync(async (req,res,next) => {
         purchaseType:'single',
         productId: item.productId,
         sellerEmail: item.sellerEmail,
+        sellerId:item.sellerId,
         shipping: item.deliveryCharges,
       },
       success_url: `${

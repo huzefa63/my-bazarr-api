@@ -47,6 +47,7 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
 
   const ids = items.map(el => el.productId);
   const emailsOfSellers = items.map(el => el.sellerEmail);
+  const IdsOfSellers = items.map(el => el.sellerId);
 
   const lineItemsData = items.map(el => {
     return {
@@ -94,6 +95,7 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
       purchaseType:'multiple',
       productIds:JSON.stringify(ids),
       sellerEmails:JSON.stringify(emailsOfSellers),
+      sellerIds:JSON.stringify(IdsOfSellers),
       shipping:deliveryCharges
     },
     success_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/orders`,

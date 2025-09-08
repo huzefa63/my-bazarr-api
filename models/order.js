@@ -5,6 +5,11 @@ const schema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
@@ -33,11 +38,6 @@ const schema = new mongoose.Schema({
     type:String,
     default:'processing',
     enum:['processing','shipped','delivered','cancelled']
-  },
-  payment:{
-    type:String,
-    enum:['pending','paid','failed'],
-    default:'pending'
   },
   deliveryExpected:Date,
 },{timestamps:true});

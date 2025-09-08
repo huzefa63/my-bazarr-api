@@ -63,6 +63,7 @@ app.post(
           .filter((el) => !el.description.startsWith("_"))
           .map((el) => el.description);
         const sellerEmails = JSON.parse(session.metadata.sellerEmails);
+        const sellerIds = JSON.parse(session.metadata.sellerIds);
         if (productIds?.length < 1) return;
 
         console.log(session.metadata.purchaseType);
@@ -73,6 +74,7 @@ app.post(
               if (!el.description.startsWith("_"))
                 return await Order.create({
                   customer: customerId,
+                  seller:sellerIds[i],
                   customerName,
                   email,
                   phoneNumber,
@@ -121,6 +123,7 @@ app.post(
         try{
           await Order.create({
             customer: customerId,
+            seller:session.metadata.sellerId,
             customerName,
             email,
             phoneNumber,
