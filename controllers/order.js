@@ -28,42 +28,46 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
     const order = await Order.findByIdAndUpdate(orderId,{status:'shipped'},{new:true});
-     const customerHtml = `
-    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-      <h2 style="color: #5cb85c;">Your Order #${
-        order._id
-      } Has Been Shipped!</h2>
-      <p>Dear ${order.customerName},</p>
-      <p>Hey there! Your order for <strong>${
+    const shippedHtml = `
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+    <h2>Your Order #${order._id} has been shipped</h2>
+    <p>Hello ${order.customerName},</p>
+    <p>Your order for <strong>${
+      order.productName
+    }</strong> has been shipped.</p>
+
+    <h3>Order Details</h3>
+    <ul>
+      <li><strong>Product:</strong> ${order.productName}</li>
+      <li><strong>Total Amount:</strong> ${formatCurrency(
+        order.totalAmount
+      )}</li>
+      <li><strong>Status:</strong> Shipped</li>
+      <li><strong>Shipped On:</strong> ${new Date(
+        order.updatedAt
+      ).toLocaleDateString()}</li>
+      <li><strong>Expected Delivery:</strong> ${new Date(
+        order.deliveryExpected
+      ).toLocaleDateString()}</li>
+    </ul>
+
+    <p>You will be notified once the order is delivered.</p>
+
+    <p>Thank you,<br/>The MyBazar Team</p>
+  </div>
+`;
+
+    await resend.emails.send({
+      from: "My-Bazarr <hello@my-bazarr.in>",
+      to: order.email,
+      subject: `Order #${order._id} Shipped`,
+      html: shippedHtml,
+      text: `Hello ${order.customerName}, your order ${order._id} for ${
         order.productName
-      }</strong> has been shipped and is on its way.</p>
-
-      <h3>Order Details</h3>
-      <ul style="padding-left: 20px;">
-        <li><strong>Product:</strong> ${order.productName}</li>
-        <li><strong>Total Amount:</strong> ${formatCurrency(order.totalAmount)}</li>
-        <li><strong>Status:</strong> Shipped</li>
-        <li><strong>Shipped On:</strong> ${new Date(
-          order.updatedAt
-        ).toLocaleDateString()}</li>
-        <li><strong>Expected Delivery:</strong> ${new Date(
-          order.deliveryExpected
-        ).toLocaleDateString()}</li>
-      </ul>
-
-      <p>We will notify you once the package is delivered.</p>
-
-      <p style="margin-top: 30px;">Thanks for shopping with us.<br/>— The MyBazar Team</p>
-    </div>
-  `;
-        console.log('sending shipping email: ',order.email);
-     // Send email to customer
-     await resend.emails.send({
-       from: "My-Bazarr <hello@my-bazarr.in>",
-       to: order.email,
-       subject: `Your Order #${order._id} Has Been Shipped`,
-       html: customerHtml,
-     });
+      } has been shipped. Expected delivery: ${new Date(
+        order.deliveryExpected
+      ).toLocaleDateString()}.`,
+    });
     res.status(200).json({ok:true});
     
 })
@@ -145,39 +149,39 @@ export const handleOrderDelivered = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
     const order = await Order.findByIdAndUpdate(orderId,{status:'delivered'},{new:true});
-     const customerHtml = `
-    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-      <h2 style="color: #28a745;">Your Order #${
-        order._id
-      } Has Been Delivered!</h2>
-      <p>Dear ${order.customerName},</p>
-      <p>We’re happy to let you know 🎉 that your order for <strong>${
+    const deliveredHtml = `
+  <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+    <h2>Your Order #${order._id} has been delivered</h2>
+    <p>Hello ${order.customerName},</p>
+    <p>Your order for <strong>${
+      order.productName
+    }</strong> has been delivered.</p>
+
+    <h3>Order Summary</h3>
+    <ul>
+      <li><strong>Product:</strong> ${order.productName}</li>
+      <li><strong>Total Paid:</strong> ${formatCurrency(order.totalAmount)}</li>
+      <li><strong>Status:</strong> Delivered</li>
+      <li><strong>Delivered On:</strong> ${new Date(
+        order.updatedAt
+      ).toLocaleDateString()}</li>
+    </ul>
+
+    <p>If you face any issues with your order, please contact our support team.</p>
+
+    <p>Thank you,<br/>The MyBazar Team</p>
+  </div>
+`;
+
+    await resend.emails.send({
+      from: "My-Bazarr <hello@my-bazarr.in>",
+      to: order.email,
+      subject: `Order #${order._id} Delivered`,
+      html: deliveredHtml,
+      text: `Hello ${order.customerName}, your order ${order._id} for ${
         order.productName
-      }</strong> has been successfully delivered.</p>
-
-      <h3>Order Summary</h3>
-      <ul style="padding-left: 20px;">
-        <li><strong>Product:</strong> ${order.productName}</li>
-        <li><strong>Total Paid:</strong> ${formatCurrency(order.totalAmount)}</li>
-        <li><strong>Status:</strong> Delivered</li>
-        <li><strong>Delivered On:</strong> ${new Date(
-          order.updatedAt
-        ).toLocaleDateString()}</li>
-      </ul>
-
-      <p>We hope you enjoy your purchase. If you face any issues, feel free to contact our support.</p>
-
-      <p style="margin-top: 30px;">Thank you for shopping with us!<br/>— The MyBazar Team</p>
-    </div>
-  `;
-        console.log('sending delivery email: ',order.email);
-     // Send email to customer
-     await resend.emails.send({
-       from: "MyBazar <hello@my-bazarr.in>",
-       to: order.email,
-       subject: `Your Order #${order._id} Has Been Delivered`,
-       html: customerHtml,
-     });
+      } has been delivered. Total paid: ${formatCurrency(order.totalAmount)}.`,
+    });
     res.status(200).json({ok:true});
 })
 
