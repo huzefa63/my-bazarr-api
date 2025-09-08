@@ -123,6 +123,7 @@ export const handleCancelOrder = catchAsync(async (req,res,next) => {
   `;
 
     // Send email to customer
+    console.log('sending email to user: ',order.email);
     await resend.emails.send({
       from: "MyBazar <no-reply@mybazar.com>",
       to: order.email,
