@@ -56,7 +56,7 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
       <p style="margin-top: 30px;">Thanks for shopping with us.<br/>— The MyBazar Team</p>
     </div>
   `;
-
+        console.log('sending shipping email: ',order.email);
      // Send email to customer
      await resend.emails.send({
        from: "My-Bazarr <hello@my-bazarr.in>",
@@ -144,7 +144,7 @@ export const handleCancelOrder = catchAsync(async (req,res,next) => {
 export const handleOrderDelivered = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const order = await Order.findByIdAndUpdate(orderId,{status:'delivered'});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'delivered'},{new:true});
      const customerHtml = `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
       <h2 style="color: #28a745;">Your Order #${
@@ -170,7 +170,7 @@ export const handleOrderDelivered = catchAsync(async (req,res,next) => {
       <p style="margin-top: 30px;">Thank you for shopping with us!<br/>— The MyBazar Team</p>
     </div>
   `;
-
+        console.log('sending delivery email: ',order.email);
      // Send email to customer
      await resend.emails.send({
        from: "MyBazar <no-reply@mybazar.com>",
