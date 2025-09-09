@@ -13,11 +13,11 @@ import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
 import ratingRoutes from "./routes/rating.js";
+import searchRoutes from "./routes/search.js";
 import bodyParser from "body-parser";
 import Stripe from "stripe";
 import Order from "./models/order.js";
 import Cart from "./models/cart.js";
-import resend from "./libs/resend.js";
 import sendOrderReceivedEmailToSeller, {
   sendOrderSuccessEmail,
 } from "./helpers/email.js";
@@ -190,6 +190,7 @@ app.use("/product", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
 app.use("/rating", ratingRoutes);
+app.use("/search", searchRoutes);
 
 // res.cookie("randomCookie", randomValue, {
 //   domain: ".my-bazarr.in", // makes cookie available on all subdomains

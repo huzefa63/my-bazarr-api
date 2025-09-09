@@ -40,3 +40,16 @@ export const handleLogin = catchAsync(async (req, res, next) => {
     user: { email: user.email, id: user._id, username: user.username },
   });
 });
+
+export const handleLogout = catchAsync(async (req, res, next) => {
+  res.cookie("token", "", {
+      domain: ".my-bazarr.in",
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 0, // expires immediately
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
+});
