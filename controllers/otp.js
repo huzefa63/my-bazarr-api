@@ -87,7 +87,7 @@ export const sendDeliveryOtp = catchAsync(async (req, res, next) => {
 
                   <p style="margin-top: 30px; font-size: 13px; color: #777;">
                     Thank you for shopping with us.<br />
-                    – The MyBazar Team
+                    – The My-Bazarr Team
                   </p>
                 </td>
               </tr>
