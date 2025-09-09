@@ -12,6 +12,7 @@ import OtpRoutes from "./routes/otp.js";
 import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import orderRoutes from "./routes/order.js";
+import ratingRoutes from "./routes/rating.js";
 import bodyParser from "body-parser";
 import Stripe from "stripe";
 import Order from "./models/order.js";
@@ -188,6 +189,7 @@ app.use("/otp", OtpRoutes);
 app.use("/product", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/order", orderRoutes);
+app.use("/rating", ratingRoutes);
 
 // res.cookie("randomCookie", randomValue, {
 //   domain: ".my-bazarr.in", // makes cookie available on all subdomains

@@ -188,8 +188,8 @@ export const handleOrderDelivered = catchAsync(async (req,res,next) => {
 export const handleGetOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const order = await Order.findById(orderId).populate('seller');
-    res.status(200).json({ok:true,order});
+    const order = await Order.findById(orderId).populate('seller').populate('product');
+    res.status(200).json({ok:true,order,currentUser:id});
 })
 
 export const handleCheckoutOrder = catchAsync(async (req,res,next) => {

@@ -3,6 +3,9 @@ import catchAsync from "../utils/catchAsync.js";
 import { Readable } from "stream";
 import cloudinary from "../libs/cloudinary.js";
 import Product from "../models/product.js";
+import Rating from "../models/rating.js";
+import mongoose from "mongoose";
+
 export const resizeImages = catchAsync(async (req, res, next) => {
   // console.log('filter here')
   // console.log(req.files)
@@ -70,7 +73,23 @@ export const handleGetMyProducts = catchAsync(async (req, res, next) => {
 export const handleGetProductDetails = catchAsync(async (req, res, next) => {
   const {productId} = req.params
   const product = await Product.findById(productId).populate('seller');
-  res.status(200).json({ message: "success", product });
+  const commentsCount = await Rating.countDocuments({product:productId});
+
+  const avgRating = await Rating.aggregate([
+    {
+      $match: { product: new mongoose.Types.ObjectId(productId) },
+    },
+    {
+      $group: {
+        _id: "$product",
+        ratingsAvg: {
+          $avg: "$rating",
+        },
+        totalRatings: { $sum: 1 },
+      },
+    },
+  ]);
+  res.status(200).json({ message: "success", product,avgRating,commentsCount });
 });
 
 export const handleGetProducts = catchAsync(async (req, res, next) => {

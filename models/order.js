@@ -14,6 +14,13 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
   },
+  rated:{
+    type:Boolean,
+    default:false
+  },
+  ratingDate:Date,
+  comment:String,
+  rating:Number,
   email:String,
   customerName:String,
   phoneNumber:String,
