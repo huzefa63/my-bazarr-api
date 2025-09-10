@@ -9,12 +9,14 @@ import {
   handleShipOrder,
   handleCancelOrder,
   handleOrderDelivered,
+  updateOrder,
 } from "../controllers/order.js";
 import { protectRoute } from "../controllers/auth.js";
 
 const route = express.Router();
 
 route.post('/createOrder',protectRoute,createOrder)
+route.post('/update/:orderId',protectRoute,updateOrder)
 route.get('/getAllOrders',protectRoute,handleGetAllOrders);
 route.get('/getAllSellerOrders',protectRoute,handleGetAllSellerOrders);
 route.get('/getOrder/:orderId',protectRoute,handleGetOrder);

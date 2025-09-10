@@ -10,6 +10,13 @@ export const createOrder = catchAsync(async (req,res,next) => {
     const newOrder = await Order.create({...order,user:id});
     res.status(200).json({message:'success'});
 })
+export const updateOrder = catchAsync(async (req,res,next) => {
+    const {id} = req.user;
+    const {instruction} = req.body;
+    const {orderId} = req.params;
+    const newOrder = await Order.findByIdAndUpdate(orderId,{instructions:instruction});
+    res.status(200).json({ok:true});
+})
 
 export const handleGetAllOrders = catchAsync(async (req,res,next) => {
     const {id} = req.user;
