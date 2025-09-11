@@ -3,6 +3,6 @@ import { getSearch } from "../controllers/search.js";
 
 const route = express.Router();
 
-route.get('/getSearch/:search',getSearch)
+route.get('/getSearch',getSearch)
 
 export default route;

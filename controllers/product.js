@@ -63,6 +63,12 @@ export const handleUploadProduct = catchAsync(async (req, res, next) => {
   res.status(201).json({message:'success'});
 });
 
+export const handleDeleteProduct = catchAsync(async (req, res, next) => {
+  const {productId} = req.params;
+  await Product.findByIdAndDelete(productId);
+  res.status(201).json({ok:true});
+});
+
 export const handleGetMyProducts = catchAsync(async (req, res, next) => {
   const id = req.user.id;
   console.log('myrsdfjd')
