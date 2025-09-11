@@ -46,8 +46,18 @@ console.log('hello')
             ],
           });
         }
+        if(search && category === 'all'){
+          const regex = new RegExp(search, "i");
+          quer = await Product.find({
+            $or: [
+              { name: regex },
+              { description: regex },
+              { category: regex },
+            ],
+          });
+        }
         console.log(quer)
-    
+        
       if(!search && category === 'all'){
         quer = await Product.find().limit(30);
       }
