@@ -183,6 +183,7 @@ app.use(cookieParser());
 
 // user routes
 
+app.use("/wake", (req,res) => res.send('waked up'));
 app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/otp", OtpRoutes);
