@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Rating from '../models/rating.js';
 import Order from '../models/order.js';
+import Product from '../models/product.js';
 import catchAsync from '../utils/catchAsync.js';
 
 export const createRating = catchAsync(async (req, res, next) => {
@@ -8,7 +9,11 @@ export const createRating = catchAsync(async (req, res, next) => {
   const { productId } = req.params;
   const {comment,rating,orderId,ratingDate} = req.body;
   await Rating.create({product:productId,rating,rater:id,comment});
-    await Order.findByIdAndUpdate(orderId,{rated:true,rating,ratingDate,comment});
+  await Order.findByIdAndUpdate(orderId,{rated:true,rating,ratingDate,comment});
+  const totalRatings = await Rating.find({product:productId});
+  const ratingsCounts = totalRatings.length;
+  const avgRating = totalRatings.reduce((acc,curr) => acc + curr.rating,0) / ratingsCounts;
+  await Product.findByIdAndUpdate(productId,{ratingsAvg:avgRating});
   res.status(201).json({ ok:true });
 });
 
