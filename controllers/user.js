@@ -1,5 +1,6 @@
 import catchAsync from "../utils/catchAsync.js";
 import User from '../models/user.js'
+import Cart from '../models/cart.js'
 import jsonwebtoken from "jsonwebtoken";
 import SendJwt from "../helpers/jwt.js";
 
@@ -17,8 +18,9 @@ export const createUser = catchAsync(async (req,res,next) => {
 })
 
 export const getUser = catchAsync(async (req,res,next) => {
-  console.log('hee')
+  console.log('hee') 
    const {id} = req.user;
    const user = await User.findById(id);
-   res.status(200).json({message:'success',user});
+   const cart = await Cart.findOne({user:id});
+   res.status(200).json({message:'success',user,cartItems:cart.items});
 })
