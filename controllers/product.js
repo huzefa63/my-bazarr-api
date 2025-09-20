@@ -107,3 +107,9 @@ export const handleGetProducts = catchAsync(async (req, res, next) => {
   ])
   res.status(200).json({ message: "success", products, totalResults });
 });
+
+export const handleGetProductMetricDetails = catchAsync(async (req, res, next) => {
+  const {productId} = req.params;
+  const productDetails = await Product.findById(productId);
+  res.status(200).json({ message: "success", productDetails });
+});

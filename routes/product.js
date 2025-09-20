@@ -7,6 +7,7 @@ import {
   handleGetProductDetails,
   handleGetProducts,
   handleDeleteProduct,
+  handleGetProductMetricDetails,
 } from "../controllers/product.js";
 import { protectRoute } from "../controllers/auth.js";
 
@@ -19,6 +20,7 @@ route.post("/uploadProduct",protectRoute, upload .fields([
 ]),resizeImages,handleUploadProduct);
 
 route.get('/getMyProducts',protectRoute,handleGetMyProducts)
+route.get('/getProductMetricDetails/:productId',protectRoute,handleGetProductMetricDetails)
 route.delete('/deleteProduct/:productId',protectRoute,handleDeleteProduct)
 route.get('/getProductDetails/:productId',handleGetProductDetails)
 route.get('/getProducts',handleGetProducts)

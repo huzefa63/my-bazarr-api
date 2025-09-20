@@ -25,6 +25,12 @@ export const handleGetAllOrders = catchAsync(async (req,res,next) => {
     res.status(200).json({ok:true,orders});
     
 })
+export const handleGetAllItemOrders = catchAsync(async (req,res,next) => {
+    const {productId} = req.params;
+    const orders = await Order.find({product:productId});
+    res.status(200).json({ok:true,orders});
+    
+})
 
 export const handleGetAllSellerOrders = catchAsync(async (req,res,next) => {
     const {id} = req.user;
