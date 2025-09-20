@@ -21,6 +21,7 @@ import Cart from "./models/cart.js";
 import sendOrderReceivedEmailToSeller, {
   sendOrderSuccessEmail,
 } from "./helpers/email.js";
+import Product from "./models/product.js";
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Initialize Resend with API key from .env
@@ -94,7 +95,14 @@ app.post(
                 });
             })
           );
-          console.log(promise);
+          const ordersLength = line.data.filter(el => !el.description.startsWith('_'));
+          await Promise.all(
+            productIds.map(async (el) => {
+              return await Product.findByIdAndUpdate(el, {
+                $inc: { ordersPending: 1 },
+              });
+            })
+          );
           await Cart.updateOne(
             { user: session.client_reference_id },
             {
@@ -141,6 +149,7 @@ app.post(
             discount: line.data[0].amount_discount / 100,
             deliveryExpected,
           });
+          await Product.findByIdAndUpdate(session.metadata.productId,{$inc:{ordersPending:1}})
           await Cart.updateOne(
             { user: session.client_reference_id },
             {

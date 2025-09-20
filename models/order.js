@@ -47,6 +47,7 @@ const schema = new mongoose.Schema({
     enum:['processing','shipped','delivered','cancelled']
   },
   deliveryExpected:Date,
+  deliveredOn:Date,
 },{timestamps:true});
 
 const model = mongoose.model("Order", schema);

@@ -3,6 +3,7 @@ import catchAsync from "../utils/catchAsync.js";
 import Stripe from 'stripe';
 import resend from '../libs/resend.js'
 import {formatCurrency} from '../helpers/formatCurrency.js'
+import Product from '../models/product.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
@@ -82,6 +83,7 @@ export const handleCancelOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
     const order = await Order.findByIdAndUpdate(orderId,{status:'cancelled'},{new:true}).populate('seller');
+    await Product.findByIdAndUpdate(order.product,{$inc:{ordersPending:-1}});
     const customerHtml = `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
       <h2 style="color: #d9534f;">Your Order #${
@@ -155,7 +157,8 @@ export const handleCancelOrder = catchAsync(async (req,res,next) => {
 export const handleOrderDelivered = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const order = await Order.findByIdAndUpdate(orderId,{status:'delivered'},{new:true});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'delivered',deliveredOn:new Date()},{new:true});
+    await Product.findByIdAndUpdate(order.product,{$inc:{sold:1,totalRevenue:order.totalAmount,ordersPending:-1}});
     const deliveredHtml = `
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
     <h2>Your Order #${order._id} has been delivered</h2>

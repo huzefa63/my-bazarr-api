@@ -63,6 +63,18 @@ const productSchema = new mongoose.Schema(
       type:Number,
       default:1
     },
+    ordersPending:{
+      type:Number,
+      default:0,
+    },
+    sold:{
+      type:Number,
+      default:0,
+    },
+    totalRevenue:{
+      type:Number,
+      default:0,
+    }
   },
   { timestamps: true }
 );
