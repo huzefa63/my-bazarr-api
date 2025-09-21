@@ -1,4 +1,5 @@
 import resend from "../libs/resend.js";
+import { formatCurrency } from "./formatCurrency.js";
 export async function sendOtpEmail(email, otp) {
   await resend.emails.send({
     from: "My-Bazarr <hello@my-bazarr.in>", // must be a verified sender
@@ -73,7 +74,7 @@ export default async function sendOrderReceivedEmailToSeller(email,order){
 
 Order ID: ${order.id}
 Customer: ${order.customerName}
-Product: ₹${order.productName}
+Product: ${formatCurrency(order.productName)}
 
 Log in to your account on my-bazarr for details.`,
     html: `

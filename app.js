@@ -160,6 +160,7 @@ app.post(
             id: session.id,
             itemsLength: 1,
             total: session.amount_total,
+            customerName,
           });
          
     

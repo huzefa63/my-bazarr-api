@@ -27,7 +27,21 @@ export const handleGetAllOrders = catchAsync(async (req,res,next) => {
 })
 export const handleGetAllItemOrders = catchAsync(async (req,res,next) => {
     const {productId} = req.params;
-    const orders = await Order.find({product:productId});
+    const {filter,startDate,endDate} = req.query;
+    let filters = {product:productId};
+    if(filter !== 'all') filters.status = filter;
+    if(startDate && endDate) {
+      const startDateHours = new Date(startDate);
+      startDateHours.setHours(0,0,0,0);
+      const endDateHours = new Date(endDate);
+      endDateHours.setHours(23,59,59,1000)
+      filters.createdAt = {
+        $gte:startDateHours,
+        $lte: endDateHours,
+      };
+    }
+    const orders = await Order.find(filters);
+    // const orders2 = await Order.find({createdAt:});
     res.status(200).json({ok:true,orders});
     
 })
@@ -42,6 +56,7 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
     const order = await Order.findByIdAndUpdate(orderId,{status:'shipped'},{new:true});
+    Product.findByIdAndUpdate(order.product,{$inc:{ordersPending:-1}});
     const shippedHtml = `
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
     <h2>Your Order #${order._id} has been shipped</h2>
@@ -88,8 +103,9 @@ export const handleShipOrder = catchAsync(async (req,res,next) => {
 export const handleCancelOrder = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
-    const order = await Order.findByIdAndUpdate(orderId,{status:'cancelled'},{new:true}).populate('seller');
-    await Product.findByIdAndUpdate(order.product,{$inc:{ordersPending:-1}});
+    const order = await Order.findByIdAndUpdate(orderId,{status:'cancelled'},{new:false}).populate('seller');
+    if(order.status !== 'shipped') await Product.findByIdAndUpdate(order.product,{$inc:{ordersPending:-1,totalOrdersCancelled:1}});
+    if(order.status === 'shipped') await Product.findByIdAndUpdate(order.product,{$inc:{totalOrdersCancelled:1}});
     const customerHtml = `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
       <h2 style="color: #d9534f;">Your Order #${
@@ -164,7 +180,8 @@ export const handleOrderDelivered = catchAsync(async (req,res,next) => {
     const {id} = req.user;
     const {orderId} = req.params;
     const order = await Order.findByIdAndUpdate(orderId,{status:'delivered',deliveredOn:new Date()},{new:true});
-    await Product.findByIdAndUpdate(order.product,{$inc:{sold:1,totalRevenue:order.totalAmount,ordersPending:-1}});
+    await Product.findByIdAndUpdate(order.product,{$inc:{sold:1,totalRevenue:order.totalAmount}});
+    // await Product.findByIdAndUpdate(order.product,{$inc:{sold:1,totalRevenue:order.totalAmount,ordersPending:-1}});
     const deliveredHtml = `
   <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
     <h2>Your Order #${order._id} has been delivered</h2>
