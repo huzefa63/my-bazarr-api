@@ -273,6 +273,7 @@ export const handleCheckoutOrder = catchAsync(async (req,res,next) => {
         sellerId:item.sellerId,
         shipping: item.deliveryCharges,
       },
+      customer_email:'test@gmail.com',
       success_url: `${
         process.env.ENVIROMENT === "production"
           ? process.env.LOCAL_URL

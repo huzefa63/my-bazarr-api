@@ -98,6 +98,7 @@ export const handleCheckoutCart = catchAsync(async (req, res, next) => {
       sellerIds:JSON.stringify(IdsOfSellers),
       shipping:deliveryCharges
     },
+    customer_email:'test@gmail.com',
     success_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/orders`,
     cancel_url: `${process.env.ENVIROMENT === 'production' ? process.env.LOCAL_URL : process.env.URL}/app/purchases/cart`,
   });
