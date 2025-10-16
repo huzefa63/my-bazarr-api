@@ -233,7 +233,7 @@ export const handleCheckoutOrder = catchAsync(async (req,res,next) => {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      customer: req.user.customerId,
+      // customer: req.user.customerId,
       client_reference_id: id,
       shipping_address_collection: {
         allowed_countries: ["IN"],
